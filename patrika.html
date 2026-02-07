@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="gu">
+
+<head>
+    <meta charset="UTF-8">
+    <title>પત્રિકા જનરેટર</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: "Noto Sans Gujarati", sans-serif;
+            background: #eee;
+            padding: 20px;
+        }
+        
+        input,
+        button {
+            padding: 8px;
+            margin: 6px 0;
+            font-family: "Noto Sans Gujarati", sans-serif;
+            font-size: 16px;
+            border-radius: 5px;
+            width: 90%;
+            height: auto;
+        }
+        
+        .form-box {
+            max-width: auto;
+            height: auto;
+            margin: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .patrika-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        #patrika {
+            width: 390px;
+            height: 470px;
+            background: #fff;
+            color: #000;
+            border: 2px solid black;
+            position: relative;
+            margin: 5px;
+        }
+        
+        .mybox {
+            width: 380px;
+            height: 430px;
+            background: #fff;
+            color: #000;
+            margin: 5px;
+            padding: 20px;
+            border: 2px solid black;
+            font-size: 16px;
+            box-sizing: border-box;
+            position: relative;
+            border-radius: 40px;
+        }
+        
+        #patrika h2,
+        #patrika h3 {
+            margin: 5px;
+        }
+        
+        .gray-box {
+            border: 1px solid #000;
+            padding: 8px;
+            margin: 10px auto;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        .bottom-note {
+            font-size: 13px;
+            border-top: 1px solid #000;
+            margin-top: 8px;
+            padding-top: 5px;
+        }
+        
+        .dotted-line {
+            border-bottom: 1px dotted black;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-box">
+        <h3>પત્રિકા માહિતી દાખલ કરો</h3>
+        <input id="nagar" placeholder="નગરનું નામ" required/>
+        <input id="shakha" placeholder="શાખાનું નામ" required/>
+        <input id="utsav" placeholder="ઉત્સવ નુંનામ" required/>
+        <input id="tithi" placeholder="તિથિ" required/>
+        <input id="dinank" placeholder="દિનાંક" required />
+        <input id="samay" placeholder="સમય" required/>
+        <input id="sthan" placeholder="સ્થળ" required/>
+        <input id="name" placeholder="ભવદીય" required/>
+        <input type="tel" pattern="[0-9]{10}" id="mobile" placeholder="મોબાઇલ" required />
+        <button type="submit" onclick="generatePatrika()">પત્રિકા બનાવો</button>
+    </div>
+    <div id="patrika">
+        <div class="patrika-container" id="patrikaBox" style="display:none;">
+            <div class="mybox">
+                <div style="font-size: 20px;">ॐ</div>
+                <h3>રાષ્ટ્રીય સ્વયંસેવક સંઘ, ગાંધીનગર</h3>
+                <h3 style="font-size: 20px;" id="outnagar"></h3>
+                <h3 id="outShakha"></h3>
+                <div style="border: 1px solid #000; display:inline-block; padding: 2px 10px; border-radius: 10px; margin: 5px 0;" id="oututsav">
+
+                </div>
+                <div class="dotted-line">આમંત્રણબંધુશ્રી..................................................</div>
+                <div class="gray-box">
+                    <div id="outTithi"></div>
+                    <div id="outDinank"></div>
+                    <div id="outSamay"></div>
+                    <div id="outSthan"></div>
+                </div>
+                <div style="text-align:right; font-size:14px;">
+                    <div class="from-box">ભવદીય</div>
+                    <div id="outName"></div>
+                    <div id="outMobile">૫</div>
+                </div>
+                <div class="bottom-note">(૧) વેશ : શુભ્રવેશ &nbsp;&nbsp; (૨) ૧૦ મિનિટ વહેલા આવવું</div>
+            </div>
+            <br>
+            <button onclick="downloadImage()">download image</button>
+            <button onclick="generatePDF()">download pdf</button>
+        </div>
+    </div>
+
+    <script>
+        function generatePatrika() {
+            document.getElementById('outnagar').innerText = document.getElementById('nagar').value;
+            document.getElementById('outShakha').innerText = document.getElementById('shakha').value;
+            document.getElementById('oututsav').innerText = document.getElementById('utsav').value;
+            document.getElementById('outTithi').innerText = "તિથિ : " + document.getElementById('tithi').value;
+            document.getElementById('outDinank').innerText = "દિનાંક : " + document.getElementById('dinank').value;
+            document.getElementById('outSamay').innerText = "સમય : " + document.getElementById('samay').value;
+            document.getElementById('outSthan').innerText = "સ્થાન : " + document.getElementById('sthan').value;
+            document.getElementById('outName').innerText = document.getElementById('name').value;
+            document.getElementById('outMobile').innerText = document.getElementById('mobile').value;
+
+            document.getElementById('patrikaBox').style.display = 'block';
+            window.scrollTo({
+                top: document.getElementById('patrikaBox').offsetTop,
+                behavior: 'smooth'
+            });
+        }
+
+        function downloadImage() {
+            html2canvas(document.getElementById("patrika")).then(canvas => {
+                let link = document.createElement("a");
+                link.download = "patrika.png";
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        function generatePDF() {
+            const element = document.getElementById("patrika");
+            html2pdf().from(element).save("patrika.pdf");
+
+        }
+    </script>
+
+</body>
+
+</html>
